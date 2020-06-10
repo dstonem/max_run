@@ -1,11 +1,13 @@
 import pygame
 import time
+import numpy
 
 class Game():
 
-    def __init__(self, menu, level):
+    def __init__(self, menu, level, score):
         self.menu = menu
         self.level = level
+        self.score = score
 
     def play(self):
         ## need to make menu work
@@ -16,15 +18,15 @@ class Game():
 
 class Character():
 
-    def __init__(self, name, pos, img, speed=10, health=100,attack_power=5):
+    def __init__(self, name, pos, speed, health=100,attack_power=5):
         # this init function will run for every instance of Player
         
         # since the value of self.name is a variable, we have to put 'name'
         # as an argument above
         self.name = name
-        self.speed = 10
+        self.speed = speed
         self.health = health
-        self.img = pygame.image.load("MaxRun/resources/max.png")
+        
 
         self.kind = False
         self.pos = pos
@@ -32,25 +34,31 @@ class Character():
         
         print("%s instantiated at %s!" % (self.name, self.pos))
 
-    def move(self,dir):
-        if dir == "left":
-            self.pos["x"] -= self.speed
-        elif dir == "right":
-            self.pos["x"] += self.speed
-        elif dir == "up":
-            self.pos["y"] += self.speed
-        elif dir == "down":
-            self.pos["y"] -= self.speed
+    # def move(self,dir):
+    #     if dir == "left":
+    #         self.pos["x"] -= self.speed
+    #     elif dir == "right":
+    #         self.pos["x"] += self.speed
+    #     elif dir == "up":
+    #         self.pos["y"] += self.speed
+    #     elif dir == "down":
+    #         self.pos["y"] -= self.speed
 
     def attack(self):
         return self.attack_power
+
+    def hug(self, char):
+        self.kind = True
+        if (char.pos["x"] - self.pos["x"]) < 50 and (char.pos["y"] - self.pos["y"]) < 50:
+            char.kind = True
+            char.dir = -1
+            char.speed = (char.dir * char.speed)
 
 class Player(Character):
     
     def heal(self):
         self.health += 25
-    def hug(self):
-        self.kind = True
+    
     
 ####
 ####
@@ -73,14 +81,18 @@ class Enemy(Character):
     #     #rotate image of badguy
 
     def move(self):
-        time.sleep(0.1)
+        time.sleep(0.01)
         self.pos["y"] += self.speed
-        if self.kind:
-            self.pos["y"] -= self.speed
+        # if self.kind:
+        #     self.pos["y"] -= self.speed
 
+    ########## NOT WORKING - Max's health keeps going down after the enemy
+    ########## is far away
     def attack(self, char):
         if (char.pos["x"] - self.pos["x"]) < 50 and (char.pos["y"] - self.pos["y"]) < 50:
             char.health -= self.attack_power
+        else:
+            char.health = char.health
 
 # enemy1 = Enemy("badguy1",{"x":0,"y":0},False)
 # print(enemy1.pos)
