@@ -9,12 +9,15 @@ class Game():
         self.level = level
         self.score = score
 
-    def play(self):
-        ## need to make menu work
-        #play = input("Press Enter to Play")
-        pygame.display.set_caption('A bit Racey')
-        if self.play == "":
-            self.level = 1
+    def play(self,level=0):
+        pygame.display.set_caption('Max vs. The Bullies')
+        self.level = level + 1
+    
+    def add_score(self, points):
+        self.score += points
+    
+    def end(self):
+        self.level = 0
 
 class Character():
 
@@ -32,7 +35,7 @@ class Character():
         self.pos = pos
         self.attack_power = attack_power
         
-        print("%s instantiated at %s!" % (self.name, self.pos))
+        # print("%s instantiated at %s!" % (self.name, self.pos))
 
     # def move(self,dir):
     #     if dir == "left":
@@ -47,18 +50,12 @@ class Character():
     def attack(self):
         return self.attack_power
 
-    def hug(self, char):
-        self.kind = True
-        if (char.pos["x"] - self.pos["x"]) < 50 and (char.pos["y"] - self.pos["y"]) < 50:
-            char.kind = True
-            char.dir = -1
-            char.speed = (char.dir * char.speed)
-
-class Player(Character):
-    
     def heal(self):
-        self.health += 25
-    
+        self.health += 10
+
+    def hug(self, char):
+        char.kind = True
+        
     
 ####
 ####
@@ -81,18 +78,21 @@ class Enemy(Character):
     #     #rotate image of badguy
 
     def move(self):
-        time.sleep(0.01)
-        self.pos["y"] += self.speed
-        # if self.kind:
-        #     self.pos["y"] -= self.speed
+        modifier = 1
+        if self.kind:
+            modifier = -1
+        self.pos["y"] += self.speed * modifier
 
-    ########## NOT WORKING - Max's health keeps going down after the enemy
-    ########## is far away
     def attack(self, char):
-        if (char.pos["x"] - self.pos["x"]) < 50 and (char.pos["y"] - self.pos["y"]) < 50:
+        if ((self.pos["x"]+50) - (char.pos["x"]+25)) < 100 and ((char.pos["x"]+25) - (self.pos["x"]+50)) < 100 and ((self.pos["y"]+60) - (char.pos["y"]+25)) < 100 and ((char.pos["y"]+25) - (self.pos["y"]+60)) < 100 and self.pos["y"] < 900:
             char.health -= self.attack_power
         else:
             char.health = char.health
+
+    def dance(self):
+        self.speed = 0
+        self.attack_power = 0
+        
 
 # enemy1 = Enemy("badguy1",{"x":0,"y":0},False)
 # print(enemy1.pos)
