@@ -9,19 +9,29 @@ class Game():
         self.level = level
         self.score = score
 
-    def play(self,level=0):
+    def play(self,level,char,speed):
         pygame.display.set_caption('Max vs. The Bullies')
+        if self.score == 0:
+            self.level == 1
         self.level = level + 1
+        char.speed = speed
     
     def add_score(self, points):
         self.score += points
     
-    def end(self):
-        self.level = 0
+    def end(self, char):
+        self.level = -1
+        char.speed = 0
+
+    def restart(self, level, score, char, enemies):
+        self.level = level
+        self.score = score
+        char.health = 100
+        enemies = ""
 
 class Character():
 
-    def __init__(self, name, pos, speed, health=100,attack_power=5):
+    def __init__(self, name, pos, speed, health=100,attack_power=2):
         # this init function will run for every instance of Player
         
         # since the value of self.name is a variable, we have to put 'name'
@@ -50,11 +60,13 @@ class Character():
     def attack(self):
         return self.attack_power
 
-    def heal(self):
-        self.health += 10
+    def heal(self,char):
+        self.health += 20
+        char.health += 20
 
     def hug(self, char):
-        char.kind = True
+        if char.health > 80:
+            char.kind = True
         
     
 ####
@@ -67,7 +79,7 @@ class Enemy(Character):
     # parent/super class, we can use the super method and use the 
     # non-defaulted arguments (the ones that don't = something hard-coded)
     # as arguments here \/
-    def __init__(self,name,pos,kind,speed):
+    def __init__(self,name,pos,kind,speed,health=100):
         super().__init__(name,pos,kind)
         self.speed = speed
         self.dir = 1
@@ -81,6 +93,8 @@ class Enemy(Character):
         modifier = 1
         if self.kind:
             modifier = -1
+        if self.health < 100:
+            modifier = 1
         self.pos["y"] += self.speed * modifier
 
     def attack(self, char):
@@ -92,6 +106,22 @@ class Enemy(Character):
     def dance(self):
         self.speed = 0
         self.attack_power = 0
+
+class Projectile():
+
+    def __init__(self,x,y,radius,color):
+        self.x = x
+        self.y = y
+        self.radius = radius
+        self.color = color
+        self.vel = 8
+
+    def draw(self,win):
+        pygame.draw.circle(win, self.color, (self.x,self.y), self.radius)
+        self.y -= 20
+
+    def burn(self,char):
+        char.health -= 1
         
 
 # enemy1 = Enemy("badguy1",{"x":0,"y":0},False)
