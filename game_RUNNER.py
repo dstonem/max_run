@@ -3,10 +3,10 @@ import os
 import pygame
 import random
 
-from classes import Game
-from classes import Character
-from classes import Enemy
-from classes import Projectile
+from classes_RUNNER import Game
+from classes_RUNNER import Character
+from classes_RUNNER import Enemy
+from classes_RUNNER import Projectile
 
 ################################
 ### GAME SETUP
@@ -16,12 +16,13 @@ fps   = 60  # frame rate
 ani   = 4   # animation cycles
 clock = pygame.time.Clock()
 pygame.init()
+timer = 0
 
 width = 800
 height = 800
 win = pygame.display.set_mode((width,height))
-backdrop = pygame.image.load("/Users/dylan/dc_projects/max_run/resources/fireballs/1/1.png").convert()
-backdropbox = win.get_rect()
+backgrounds = [pygame.image.load("/Users/dylan/dc_projects/max_run/resources/lava.png"),pygame.image.load("/Users/dylan/dc_projects/max_run/resources/underwater.png"),pygame.image.load("/Users/dylan/dc_projects/max_run/resources/wall.png"),pygame.image.load("/Users/dylan/dc_projects/max_run/resources/beach.png"),pygame.image.load("/Users/dylan/dc_projects/max_run/resources/Battleground1.png"),pygame.image.load("/Users/dylan/dc_projects/max_run/resources/spooky.png"),pygame.image.load("/Users/dylan/dc_projects/max_run/resources/fh.jpeg"),pygame.image.load("/Users/dylan/dc_projects/max_run/resources/IMG_3540.jpg"),pygame.image.load("/Users/dylan/dc_projects/max_run/resources/trees.jpeg"),pygame.image.load("/Users/dylan/dc_projects/max_run/resources/map02_preview-01.png")]
+backgroundbox = win.get_rect()
 pygame.display.set_caption('Max vs. The Bullies')
 # pygame.mixer.music.load('resources/maximum.mp3')
 # pygame.mixer.music.play(0)
@@ -58,9 +59,9 @@ def variables_display(text,posY):
 max_img = pygame.image.load("/Users/dylan/dc_projects/max_run/resources/max.png")
 max_img = pygame.transform.scale(max_img, (100,125))
 max_img = pygame.transform.flip(max_img,0,180)
-max = Character("Max",{"x":width/2,"y":height/2},(game.level*50)/2)
+max = Character("Max",{"x":width/2,"y":height/4*3},(game.level*50)/2)
 
-# list containinig every bully he hugged
+# list containing every bully he hugged
 new_friends = []
 friend = Enemy("badguy",{"x":random.randint(1,width-100),"y":random.randint(0,height)},True,0)
 
@@ -97,51 +98,64 @@ run_count = 0
 index = 0
 enemy_img = pygame.image.load("/Users/dylan/dc_projects/max_run/resources/badguy/run/1_000.png")
 
-backgrounds = [pygame.image.load("/Users/dylan/dc_projects/max_run/resources/lava.png")]
+def spawn(level,num_badguys,level_length,enemy_speed):
+    if game.level == level:
+        for i in range(0,num_badguys):
+            enemy = Enemy("badguy",{"x":random.randint(0,3)*(width/3)+100,"y":random.randint(-level_length,0)},False,enemy_speed)
+            enemies.append(enemy)
 
-def spawn(level):
-    if game.level == 1:
-        for i in range(1,11):
-            enemy = Enemy("badguy",{"x":random.randint(1,width-100),"y":random.randint(-1000,0)},False,2)
-            enemies.append(enemy)
-    elif game.level == 2:
-        for i in range(1,11):
-            enemy = Enemy("badguy",{"x":random.randint(1,width-100),"y":random.randint(-1000,0)},False,3)
-            enemies.append(enemy)
-    elif game.level == 3:
-        for i in range(1,16):
-            enemy = Enemy("badguy",{"x":random.randint(1,width-100),"y":random.randint(-1000,0)},False,3)
-            enemies.append(enemy)
-    elif game.level == 4:
-        for i in range(1,21):
-            enemy = Enemy("badguy",{"x":random.randint(1,width-100),"y":random.randint(-2000,0)},False,4)
-            enemies.append(enemy)
-    elif game.level == 5:
-        for i in range(1,11):
-            enemy = Enemy("badguy",{"x":random.randint(1,width-100),"y":random.randint(-1000,0)},False,5)
-            enemies.append(enemy)
-    elif game.level == 6:
-        for i in range(1,41):
-            enemy = Enemy("badguy",{"x":random.randint(1,width-100),"y":random.randint(-3000,0)},False,5)
-            enemies.append(enemy)
+levels = [1,2,3,4,5,6,7,8,9,10]
+lvl_index = 0
+for i in levels:
+    if lvl_index > 0:
+        spawn(lvl_index,lvl_index+10,lvl_index*1000,lvl_index+3)
+        lvl_index += 1
+
+# def spawn(level):
+#     if game.level == 1:
+#         for i in range(1,11):
+#             enemy = Enemy("badguy",{"x":random.randint(0,3)*(width/3)+100,"y":random.randint(-1000,0)},False,2)
+#             enemies.append(enemy)
+#     elif game.level == 2:
+#         for i in range(1,11):
+#             enemy = Enemy("badguy",{"x":random.randint(0,3)*(width/3)+100,"y":random.randint(-1000,0)},False,3)
+#             enemies.append(enemy)
+#     elif game.level == 3:
+#         for i in range(1,16):
+#             enemy = Enemy("badguy",{"x":random.randint(0,3)*(width/3)+100,"y":random.randint(-1000,0)},False,3)
+#             enemies.append(enemy)
+#     elif game.level == 4:
+#         for i in range(1,21):
+#             enemy = Enemy("badguy",{"x":random.randint(0,3)*(width/3)+100,"y":random.randint(-2000,0)},False,4)
+#             enemies.append(enemy)
+#     elif game.level == 5:
+#         for i in range(1,11):
+#             enemy = Enemy("badguy",{"x":random.randint(0,3)*(width/3)+100,"y":random.randint(-1000,0)},False,5)
+#             enemies.append(enemy)
+#     elif game.level == 6:
+#         for i in range(1,41):
+#             enemy = Enemy("badguy",{"x":random.randint(0,3)*(width/3)+100,"y":random.randint(-3000,0)},False,5)
+#             enemies.append(enemy)
 
 bullets = []
-# fireball = Projectile(x,y,radius,color)
-
-timer = -1
 extra_counter = 0
+
+################################################################
 
 ################################
 ### GAME LOOP
 ################################
+
+################################################################
 
 main = True
 won = False
 while main:
     timer += 1
     win.fill(0)
-    bg_counter = 0
-    win.blit(backgrounds[bg_counter], (0,0))
+    bg_counter = game.level
+    backgrounds[bg_counter].scroll(0,1)
+    win.blit(backgrounds[bg_counter], backgroundbox)
     extra_counter += 1
     if game.level > 0:
         variables_display(f"Level: {game.level}",100)
@@ -150,8 +164,7 @@ while main:
 
     if game.level == 0:
         message_display("Max vs. The Bullies",80,(width/2,height/3))
-
-    win.blit(backdrop, backdropbox)
+    
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             pygame.quit(); sys.exit()
@@ -168,10 +181,13 @@ while main:
     #### ADVANCE LEVEL
             elif event.key==pygame.K_8:
                 game.play(game.level,max,25)
-                spawn(game.level)
+                spawn(game.level,game.level+10,1000,game.level+2)
+    #### RESTART
             elif event.key==pygame.K_0:
-                pass
-                # start over somehow
+                ind = 0
+                for i in enemies:
+                    game.restart(0,0,max,enemies[ind])
+                    ind += 1
             elif event.key == ord('p'):
                 pygame.quit()
                 sys.exit()
@@ -211,9 +227,16 @@ while main:
         elif keys[2]:
             max.pos["y"]+=max.speed
         if keys[1]:
-            max.pos["x"]-=max.speed
+            max.pos["x"]-=width/3
         elif keys[3]:
-            max.pos["x"]+=max.speed
+            max.pos["x"]+=width/3
+
+        if max.pos["x"] > width:
+            if keys[3]:
+                max.pos["x"] -= width/3
+        if max.pos["x"] < 0:
+            if keys[1]:
+                max.pos["x"] += width/3
         
     # - draw the screen elements
     win.blit(max_img, (max.pos["x"],max.pos["y"]))
@@ -266,6 +289,8 @@ while main:
             #     index = 0
             del enemies[index]
         ### add bullies to celebrate with Max at the end
+        elif enemy.pos["y"] > height:
+            del enemies[index]
         elif enemy.pos["y"] < -150 and enemy.kind:
             new_friends.append(enemy)
             del enemies[index]
@@ -289,14 +314,11 @@ while main:
         game.end(max)
     if game.level == -1:    
         message_display("GAME OVER",115,(width/2,400))
-        message_display("Press 'p' To Play Again",28,(width/2,500))
+        message_display("Press '0' To Play Again",28,(width/2,500))
         message_display(f"Score: {game.score}",115,(width/2,200))
         for enemy in enemies:
             enemy.dance()
-        count = 0
-        for i in range(0,100):
-            max_img = pygame.transform.scale(max_img, (count+100,125))
-            count -= 1
+        max_img = pygame.transform.rotate(max_img, 90)
 
     if game.level > 0 and enemies == [] and new_friends:
         index = 0
@@ -327,13 +349,13 @@ while main:
             message_display(f"Score: {game.score}",80,(width/2,50))
             message_display("Go Max!",28,((position_counterx)+120,(position_countery*60)+20))
     
-    if game.level > 6:
+    if game.level > len(levels):
         won = True
 
     if won:
-        message_display("You Win!",80,(width/2,0))
-          
+        message_display("You Win!",180,(width/2,100))
+        message_display(f"Score: {game.score}",80,(width/2,250))
 
     print(new_friends)
     pygame.display.flip()
-    clock.tick(fps) 
+    clock.tick(fps)

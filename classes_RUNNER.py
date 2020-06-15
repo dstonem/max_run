@@ -26,7 +26,7 @@ class Game():
         self.level = level
         self.score = score
         char.health = 100
-        enemies = ""
+        enemies.attack_power = 0
 
 class Character():
 
@@ -60,7 +60,7 @@ class Character():
         return self.attack_power
 
     def heal(self,char):
-        self.health += 50
+        self.health += 20
         char.health += 20
 
     def hug(self, char):
@@ -103,7 +103,6 @@ class Enemy(Character):
             char.health = char.health
 
     def dance(self):
-        self.speed = 0
         self.attack_power = 0
 
 class Projectile():
@@ -120,7 +119,7 @@ class Projectile():
         self.y -= 20
 
     def burn(self,char):
-        char.health -= 20
+        char.health -= 40
         
 
 # enemy1 = Enemy("badguy1",{"x":0,"y":0},False)
